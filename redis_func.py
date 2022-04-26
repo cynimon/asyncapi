@@ -1,15 +1,16 @@
-async def input_words(redis_db):
-    first = input('Input first: ')
-    second = input('Input second: ')
-    is_anagramm = False
+async def main_red(redis_db):
+    first = input("Input first: ")
+    second = input("Input second: ")
+    is_anagramm = "No"
     if first == second[::-1]:
         await redis_db.incr("counter")
-        is_anagramm = True
+        is_anagramm = "Yes"
     count = await redis_db.get("counter")
-    if count is None:
-        count = 0
-    answer = {
-        "is_anagramm": is_anagramm,
-        "counter": count
-    }
-    return answer
+    return is_anagramm, count
+
+
+async def output_answer(answer):
+    anagramm, counter = answer
+    if counter is None:
+        counter = 0
+    return {"is_anagramm": anagramm, "counter": counter}
