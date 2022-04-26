@@ -1,28 +1,29 @@
 from fastapi import FastAPI
 import aioredis
+import redis_func as rf
+import asyncpg
+import databases
 
+DATABASE_URL = "postgresql://postgres:11qa@localhost:5432/devicess"
 app = FastAPI()
+database = databases.Database(DATABASE_URL)
 
 
-async def input_words(redis):
-    first = input('Input first: ')
-    second = input('Input second: ')
-    is_anagramm = False
-    if first == second[::-1]:
-        await redis.incr("counter")
-        is_anagramm = True
-    count = await redis.get("counter")
-    if count is None:
-        count = 0
-    answer = {
-        "is_anagramm": is_anagramm,
-        "counter": count
-    }
-    return answer
-
-
-@app.on_event('startup')
+@app.on_event("startup")
 async def startup_event():
-    redis = aioredis.from_url("redis://localhost", db=0, decode_responses=True)
-    result = await input_words(redis)
+    redis_db = aioredis.from_url("redis://localhost", db=0, decode_responses=True)
+    result = await rf.input_words(redis_db)
+    await database.connect()
     print(result)
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
+    await redis_db.ConnectionPool.disconnect()
+
+
+@app.get("/")
+async def ping_postgres():
+    some = await database.fetch_all('SELECT * FROM devices')
+    print(some)
