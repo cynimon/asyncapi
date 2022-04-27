@@ -1,7 +1,6 @@
 import aiopg
 import sql_queries as s
 import random as rd
-from prettytable import PrettyTable
 
 
 # обработка запросов в БД
@@ -52,18 +51,8 @@ async def devices_foo():
     await add_endpoints()
 
 
-# создание таблицы вывода данных
-def making_table(data):
-    x = PrettyTable()
-    x.field_names = ["dev_type", "amount"]
-    for dt in data:
-        x.add_row([dt[1], dt[0]])
-    x.align = "l"
-    return x
-
-
 # вывод девайсов без endoints
 async def endpointless():
-    table_data = await handle_queries(s.endpoindless)
-    result = making_table(table_data)
+    data = await handle_queries(s.endpoindless)
+    result = {dt[1]: dt[0] for dt in data}
     return result

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import aioredis
 import redis_func as rf
 import postgres_func as pf
+import sql_queries as s
 
 app = FastAPI()
 
@@ -12,7 +13,7 @@ async def get_redis():
     await redis_db.set("counter", 0)
     data = await rf.main_red(redis_db)
     result = await rf.output_answer(data)
-    print(result)
+    return result
 
 
 @app.post("/", status_code=201)
@@ -23,4 +24,14 @@ async def post_postgres():
 @app.get("/devices")
 async def get_devices():
     result = await pf.endpointless()
-    print(result)
+    return result
+
+
+@app.on_event("startup")
+async def init_tables():
+    await pf.insert_queries(s.tables_init)
+
+
+@app.on_event("shutdown")
+async def drops():
+    await pf.insert_queries(s.tables_drop)
