@@ -5,7 +5,7 @@ import random as rd
 
 # обработка запросов в БД
 async def handle_queries(querie):
-    conn = await aiopg.connect(database='devicess', user='postgres', password='11qa', host='127.0.0.1')
+    conn = await aiopg.connect(database='postgres', user='postgres', password='postgres', host='127.0.0.1')
     cur = await conn.cursor()
     await cur.execute(querie)
     ret = await cur.fetchall()
@@ -15,7 +15,7 @@ async def handle_queries(querie):
 
 # добавление данных в бд
 async def insert_queries(querie, data=None):
-    conn = await aiopg.connect(database='devicess', user='postgres', password='11qa', host='127.0.0.1')
+    conn = await aiopg.connect(database='postgres', user='postgres', password='postgres', host='127.0.0.1')
     cur = await conn.cursor()
     await cur.execute(querie, data)
     await conn.close()
