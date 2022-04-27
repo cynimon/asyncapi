@@ -9,6 +9,7 @@ app = FastAPI()
 @app.get("/")
 async def get_redis():
     redis_db = aioredis.from_url("redis://localhost", db=0, decode_responses=True)
+    await redis_db.set("counter", 0)
     data = await rf.main_red(redis_db)
     result = await rf.output_answer(data)
     print(result)
