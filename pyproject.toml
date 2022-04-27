@@ -14,6 +14,7 @@ asyncpg = "^0.25.0"
 aiopg = "^1.3.3"
 redis = "^4.2.2"
 databases = {git = "https://github.com/encode/databases.git"}
+prettytable = "^3.2.0"
 
 [tool.poetry.dev-dependencies]
 
